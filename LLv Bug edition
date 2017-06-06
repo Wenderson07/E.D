@@ -1,0 +1,483 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <windows.h>
+#include <conio.h>
+#include <time.h>
+
+#define T 20
+
+
+// Mostrar quantidade de arquivos em segundo plano
+// Display mostrar somente 9 aplicativos
+// Função remover
+//Função organizar
+//  LLV appsInstalados 
+// LLv remover 
+// App Rum Ed 
+//Salvar dados ?
+// SAlvar apps instalados 
+
+typedef struct 
+{
+	int tam;
+	char nome[30];
+}App;
+
+typedef struct{
+	App info[T];
+	int IL, FL, IA, FA;
+}tLista;
+
+
+tLista appsStore;
+tLista appsInstalados;
+tLista rum;
+int count;
+
+
+void inicializarLista(tLista *LLV){
+	LLV->IL = -1;
+	LLV->FL = -1; 
+	LLV->IA = 0;
+	LLV->FA = T;
+}
+
+int carregar_dados(){
+	int i=0,j=0,parada1;
+	FILE *leitura_apps;
+ 	 leitura_apps = fopen("aplicativos.txt","r");
+ 	 
+	if(leitura_apps== NULL){
+		printf("Erro ao carregar os dados\n");
+		}
+	else
+	{
+		while(parada1 != -1)
+		{		  		
+		((parada1 =fscanf(leitura_apps,"%s %d\n",&appsStore.info[i].nome, &appsStore.info[i].tam))!=EOF);
+		i++;} 
+		 }
+	
+	fclose(leitura_apps);
+}
+
+
+void gotoxy(int x, int y){ //Para o display
+  COORD coordenadas;
+  coordenadas.X = x;
+  coordenadas.Y = y;
+  SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), coordenadas);
+}
+
+
+/*
+void instalar(int indice){
+	int resp=0,a,i,x=0;
+	system("cls");
+	
+	for(i=0;i<20;i++){											//Verificar se o aplicativo esta instalado
+		a=strcmp(appsStore.info[indice].nome,appsInstalados.info[i].nome);
+	if(a==0){
+		x++;}}
+	
+	if(x<=0){
+		appsInstalados.info[count]=appsStore.info[indice];
+																//Caso Negativo	  		
+		count++;				
+		printf("Aplicativo %s instalado com sucesso\n\nDeseja instalar outro aplicativo ?\n1-Voltar para store ou 2-Voltar para Home\n",appsStore.info[indice].nome);}	
+																
+	else{														//Caso Positivo
+		printf("Aplicativo ja esta instalado\n\n1-Digitar outro codigo 2-Voltar ao menu\n");		
+	}
+	
+	scanf("%d",&resp);
+	while((resp !=1) && (resp != 2)){				//Voltar para store ou menu
+		  scanf("%d",&resp);	
+	}
+	if(resp ==1){
+		storeED();
+	}
+	else
+	{
+		display();
+	} 
+	
+	
+}
+*/
+
+
+void instalar(int indice){
+	tLista aux;
+	aux.info[0] =  appsStore.info[indice];
+	int i,j,cont=0,pos;
+	
+	
+		if((aux.info[0].tam <= appsInstalados.info[0].tam)||(appsInstalados.IL != appsInstalados.IA)){
+				printf("IL = %d\tFL =%d\tIA =%d\tFA =%d\t\n",appsInstalados.IL,appsInstalados.FL,appsInstalados.IA,appsInstalados.FA);	
+				if(!(appsInstalados.IL == appsInstalados.IA && appsInstalados.FL == appsInstalados.FA)){ 
+					printf("Entrou em inserir inicio \n");
+					if(appsInstalados.FL == -1){ //Inserindo em lista vazia 
+				   	    appsInstalados.IL =appsInstalados.FL  =  appsInstalados.IA;
+						appsInstalados.info[appsInstalados.IL] = aux.info[0];
+						printf("\nInseriu no começo da lista\n");
+					}
+					else{
+						if(appsInstalados.IL > appsInstalados.IA){ // Inserindo em Lista com elemento
+							appsInstalados.IL--;
+							appsInstalados.info[appsInstalados.IL] = aux.info[0];
+							printf("Inseriu no inicio em lista com varios elementos\n");
+						}
+						//inserir em lista após ser inicializado
+						else{	
+							printf("Inserir depois de iniciar\n");
+							appsInstalados.FL++;
+							for(i=appsInstalados.FL;i>=appsInstalados.IL;i--){
+							//	printf("%s, vai tomar o lugar de:%s em %d\n",appsInstalados.info[i+1].nome,appsInstalados.info[i].nome,i);
+								appsInstalados.info[i+1] = appsInstalados.info[i];
+							//	printf("%s, tomou o lugar de:%s em %d\n",appsInstalados.info[i+1].nome,appsInstalados.info[i].nome,i);
+								
+							}
+							system("pause");
+							appsInstalados.info[0] = aux.info[0];
+						
+						}
+					}
+				}
+				printf("IL = %d\tFL =%d\tIA =%d\tFA =%d\t\n",appsInstalados.IL,appsInstalados.FL,appsInstalados.IA,appsInstalados.FA);
+				system("pause");
+				display();
+			}
+			
+		
+		else{
+			for(i=0;i<T;i++){
+				if(appsInstalados.info[i].tam > aux.info[0].tam){
+					cont++; 
+					printf("Comparando %d com %d , cont = %d\n",appsInstalados.info[i].tam,aux.info[0].tam,cont);   
+				}
+			}			
+			
+			
+
+							
+			
+					
+			if (cont > 0){
+					printf("IL = %d\tFL =%d\tIA =%d\tFA =%d\t\n",appsInstalados.IL,appsInstalados.FL,appsInstalados.IA,appsInstalados.FA);
+				printf("Entrou em inserir Meio ");
+				printf("X tendendo a direita\ni=%d\t,FL=%d\n",i,appsInstalados.FL);
+				for(i=0;i<=T;i++){
+					if(appsInstalados.info[i].tam > aux.info[0].tam){
+						if(!(appsInstalados.IL == appsInstalados.IA && appsInstalados.FL == appsInstalados.FA)){
+							if(appsInstalados.FL != appsInstalados.FA){
+								for(j=appsInstalados.FL;j>=i;j--){
+									printf("j=%d,FL=%d apps instaladosinfo [j+1]= %s ; apps j = %s\n",j,appsInstalados.FL,appsInstalados.info[j+1].nome,appsInstalados.info[j].nome);
+									appsInstalados.info[j+1] = appsInstalados.info[j];
+								}
+								appsInstalados.FL++; // < Causando bug
+								printf("%d = fl ",appsInstalados.FL);
+								appsInstalados.info[i] = aux.info[0];
+							}
+							else{
+								printf("X tendendo a esquerda\n");
+								for(j=appsInstalados.IL;j<=i;j++){
+									appsInstalados.info[j-1] = appsInstalados.info[j];
+								}
+								appsInstalados.IL--;
+								appsInstalados.info[i] = aux.info[0];
+							}
+						}
+					}
+				}
+				
+				system("pause");
+				display();	
+			
+		}
+		
+			if (cont ==0)
+			{
+			
+				printf("Entrou em inserir no Fim ");
+			if(!(appsInstalados.IL == appsInstalados.IA && appsInstalados.FL == appsInstalados.FA)){
+				if(appsInstalados.FL != appsInstalados.FA){
+					appsInstalados.FL++;
+				}
+				else{
+					for(i = appsInstalados.IL; i<=appsInstalados.FL;i++){
+						appsInstalados.info[i-1] = appsInstalados.info[i];
+					}
+					appsInstalados.IL--;
+					appsInstalados.info[appsInstalados.FL] = aux.info[0];
+				}
+				appsInstalados.info[appsInstalados.FL] = aux.info[0];
+			}
+				printf("IL = %d\tFL =%d\tIA =%d\tFA =%d\t\n",appsInstalados.IL,appsInstalados.FL,appsInstalados.IA,appsInstalados.FA);
+			system("pause");
+				display();
+		  	}	
+}
+}
+void executar(int indice){
+	char local[50];
+	int i,count1=0,a,resp=1,resp_tax=1,resp_out=0;
+	for(i=0;i<T;i++){
+		if(appsInstalados.info[indice].nome[0] == appsInstalados.info[i].nome[0] || appsInstalados.info[0].tam== -1){
+			count1++;
+			}}
+		if(count1==20){
+			system("cls");
+			printf("Nao tem nenhum aplicativo instalado\nInstale um a partir da store\n");
+			system("pause");
+			display();
+		}
+	else
+	{   	
+	SetConsoleTitle("Rum ED");
+	system("cls");
+	printf("APLICATIVOS ATIVOS: ");
+	switch(appsInstalados.info[indice].nome[0])
+		{
+		case 'W':
+			printf("\n===WhatsApp===\n\tInfelizmente voce nao tem nenhum contato adicionado\n\n");
+			
+			
+			system("pause");
+			break;
+		case 'F':
+			printf("\n===Facebook===\n\tOops, something went wrong. Please try again later\n\n");
+			system("pause");
+			break;
+		case 'I':
+			printf("\n===Intagram===\n");
+			system("pause");
+			break;
+		case 'U':
+			printf("\n===UBER===\n\nInfelizmente o uber ainda nao atua em sua regiao !\n\n");
+			system("pause");
+			break;
+		case '9':
+			printf("\n===99 TAXI===\n");
+			while(resp_tax !=2)
+			{
+			printf("Digite o lugar de saida: ");
+			scanf("%s",&local);
+			printf("Digite o lugar de destino: ");
+			scanf("%s",&local);
+			printf("O valor da corrida e de R$%2.d\nInfelizmente nao existe motoristas disponiveis nesse horario\n1-Calcular outra corrida 2-Sair\n\n",rand()%100);
+			scanf("%d",&resp_tax);}
+			break;
+		case 'D':
+			printf("\n===DropBox===\n\tAplicativo em desenvolvimento\n\n");
+			system("pause");
+			break;
+		case 'M':
+			printf("\n===Messenger===\n\tAplicativo em desenvolvimento, volte novamente proximo mes\n\t");
+			break;
+		case 'T': 
+			printf("\nTeste Auditivo\nExecutando o teste: \a\a\a\a\a\a\a\a\a\a\a\nDeseja executar novamente ? 1-sim 2-Nao\n");
+			while(resp !=2)
+			{
+				scanf("%d",&resp);
+				if(resp ==1){
+				printf("\a\a\a\a\a\a\a\a\nDeseja executar novamente ? 1-sim 2-Nao\n");
+				}
+				
+				
+			} ;
+			display();
+			break;
+		case '4':
+			printf("\n===4Shared===\nAplicativo derrubado temporariamente devido a situacoes judiciais\n");
+			system("pause");
+			break;
+		case 'S':
+			printf("\n===Sigaa===\nErro Inesperado no sistema,uma mensagem foi enviada para o nti\n\n");
+			system("pause");
+			break;
+		case 'H':
+			printf("\n===Horario===\n");
+			const time_t timer = time(NULL);
+			printf("Horario atual:  %s\n\n", ctime(&timer));
+				system("pause");
+			break;
+		case 'O':
+			printf("\n===Outlook===\nCaixa de Entrada(1)\n1-Abrir email ou 2-Home\n");
+			while((resp_out !=1) && (resp_out != 2))
+			{
+				scanf("%d",&resp_out);
+				printf("1-Abrir email ou 2-Home\n\n");
+			}
+			if (resp_out ==1){
+				printf("\n\tBem Vindo ao Outlook,Use o Outlook para acessar email, contatos, calendarios e tarefas de praticamente qualquer lugar. Voce so precisa de acesso a Internet.\n");
+				scanf("2-Home\n");}
+				while(resp_out != 2){
+				printf("2-Home\n");
+				scanf("%d",&resp_out);}
+			
+			if(resp == 2){
+				display();
+			}
+		case 'N':
+			printf("\n===Netflix===\n\tNao foi possivel conectar ao serviço Netflix\n\t(Sorry, we were unable to reach the Netflix service)\n\n");
+			system("pause");
+			break;
+		case'B':
+			printf("\n===Banco do Brasil===\n\Saldo na conta : R$ 00.00\n\n");
+			system("pause");
+			break;
+		case 'A':
+			printf("\n===Avast===\n\tPossiveis virus detectados : 0\n\n");
+			system("pause");
+			break;
+		default:
+			break;
+
+		}
+		int j;
+	}
+	display();
+	}
+
+
+void meusAppsED(){
+	int i,resp=-1,resp2=-1; //resp 1 pega o indice , resp 2-escolha do user
+	system("cls");
+	SetConsoleTitle("MEU APPS ED");
+	printf("Lista de Aplicativos instalados:\n");
+	if(appsInstalados.info[0].tam == 0){
+		printf("\nNenhum aplicativo foi instalado, instale um na store\n");
+	}
+	else
+	{
+		
+	
+	for(i=0;i<20;i++){
+		printf("%s\n",appsInstalados.info[i].nome);
+		
+	}
+	printf("Digite o codigo do aplicativo  ou digite 0 para sair\n");
+	scanf("%d",&resp);\
+	while (resp <=0 && resp > 10){
+	scanf("%d",&resp);}	
+	if(resp == 0){
+		display();
+	}
+	else
+	{
+		
+		printf("%s\n1-Executar  2-Fechar  3-Desinstalar\n",appsInstalados.info[resp -1].nome);
+		scanf("%d",&resp2);
+		if (resp2 ==1)
+		executar(resp-1);}
+			
+
+}	
+system("pause");
+display();	
+}
+
+void storeED(){
+	SetConsoleTitle("STORE ED");
+	system("cls");
+	char tecla; 
+	int i,j,resposta;
+	printf("_____________________StoreED_________________________________\n|");
+	for (i=0;i<T;i++){
+		
+	printf("|Cod:%d|\nnome:%s\nTamanho:%d\nQntd de downloads Hoje:%d\n\n",i+1,appsStore.info[i].nome,appsStore.info[i].tam,rand());
+	
+}
+
+	printf("Digite o codigo do aplicativo a ser instalado: ");
+	scanf("%d",&resposta);
+	while((resposta <=0) || (resposta >20)){
+	printf("Digite um codigo valido:\n");
+	scanf("%d",&resposta);
+	}
+
+	instalar(resposta -1);
+	}
+
+void displayOptions(){
+	int resp = -1;
+	printf("\n\t\t1 - Store\n\t\t2 - Meus Apps\n\t\t3-9 Aplicativos instalados\n\t\t0-Desligar\n");
+	scanf("%d",&resp);
+	
+
+	if (resp ==1){
+		storeED();
+	}
+	if(resp ==2 ){
+		meusAppsED();
+	}
+	if(resp >2 && resp <=9){ 
+		if(appsInstalados.info[resp - 3].tam== 0)
+		resp =-1;
+		while(resp <=0 && resp >9 && appsInstalados.info[resp - 3].nome == 0)
+		{
+		scanf("%d",&resp);	
+		printf("Codigo de app errado, digite um dos codigos entre os aplicativos ja existentes:\n");
+		}
+		executar(resp -3);				
+	}
+	if(resp == 666){
+		int i;
+		printf("IL = %d\t",appsInstalados.IL);
+	   	printf("FL = %d\t",appsInstalados.FL);
+	   	printf("IA = %d\t",appsInstalados.IA);
+	   	printf("FA = %d\t\n",appsInstalados.FA);
+		for(i = 0;i<T;i++){	
+	   	printf("I = %d nome = %.5s\t tam =%d\n",i,appsInstalados.info[i].nome,appsInstalados.info[i].tam);
+			  
+			 	
+	}
+	
+	 system("pause");
+			  display();
+	}
+	if(resp ==  0) {
+		printf("MobileED desligando....\n");
+		system("pause");
+		exit (0);
+		}
+
+}
+
+
+void display(){
+	SetConsoleTitle("MOBILE ED");
+	system("cls");
+	int o;
+
+
+	int i=1,j=2,k=3,l=1,c=1; //variaveis para o display
+	int resp; 
+	int a=0;
+		printf("\t\tÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ");//codigo do display
+		printf("\n\t\t\xB0 StoreED   Meus Apps   Whats \xB0\n\t\t\xB0"); //\t\t\xB0 == barras no inicio
+		for(l=1;l<4;l++){		
+		printf("\n\t\t\xB0\n\t\t\xB0\n\t\t\xB0 %.5s     %.5s       %.5s",appsInstalados.info[i].nome,appsInstalados.info[j].nome,appsInstalados.info[k].nome);
+		i+=3;
+		j+=3;
+		k+=3;}	
+		for(l = 2;l<12;l++){
+		gotoxy(46,l); //46 = coluna , l = liha, codigo para barra na direita
+		printf("\xB0");
+			}			
+	   	printf("\n\t\tÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ");
+	displayOptions();
+}
+
+int main(){
+	SetConsoleTitle("MOBILE ED");
+	system("color 0a");
+	carregar_dados();
+	inicializarLista(&appsStore);
+	inicializarLista(&appsInstalados);
+	inicializarLista(&rum);
+	display();
+	
+}
