@@ -1,0 +1,298 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct arv{
+  int valor;
+  struct arv* esq;
+  struct arv* dir;
+}Arvore;
+
+/*
+typedef struct Elemento_da_lista{
+    char *dados;
+    struct Elemento_da_lista *proximo;
+}Elemento;
+
+
+struct Localizar{
+  Elemento *inicio;
+  int tamanho;
+} Pilha;
+
+
+void iniciar (Localizar *monte){
+  monte->inicio = NULL;
+  monte->tamanho = 0;
+}
+*/
+Arvore* criarArvoreBinaria(){
+  return NULL;
+}
+/*
+
+int empilhar(Localizar * monte, char *dados){
+  Elemento *novo_elemento;
+  if ((novo_elemento = (Elemento *) malloc (sizeof (Elemento))) == NULL)
+    return -1;
+  if ((novo_elemento->dados = (char *) malloc (50 * sizeof (char)))
+      == NULL)
+    return -1;
+  strcpy (novo_elemento->dados, dados);
+  novo_elemento->proximo = monte->inicio;
+  monte->inicio = novo_elemento;
+  monte->tamanho++;
+}
+
+void mostrar(Localizar * monte){
+  Elemento *atual;
+  int i;
+  atual = monte->inicio;
+
+  for(i=0;i<monte->tamanho;++i){
+    printf("\t\t%s\n", atual->dados);
+    atual = atual->proximo;
+  }
+}
+
+int desempilhar (Localizar *monte){
+  Elemento *p_elemento;
+  if (monte->tamanho == 0)
+    return -1;
+  p_elemento = monte->inicio;
+  monte->inicio = monte->inicio->proximo;
+  free (p_elemento->dados);
+  free (p_elemento);
+  monte->tamanho--;
+  return 0;
+}
+
+*/
+void imprimirArvore(Arvore* f){
+  if(f != NULL){
+    imprimirArvore(f->esq);
+    printf("%d\n\t\t", f->valor);
+    imprimirArvore(f->dir);
+  }
+}
+
+int buscarNaArvore(Arvore* r, int v){
+  if(r == NULL){
+    return NULL;}
+  else if(r->valor > v){
+    return buscarNaArvore(r->esq,v);}
+  else if(r->valor < v){
+    return buscarNaArvore(r->dir,v);}
+  else
+    return r;
+}
+
+int SomarNos(Arvore* no,int soma){
+   if (no != NULL){
+		soma=SomarNos(no->esq,soma)+SomarNos(no->dir,soma)+ no->valor;
+	}
+	else{
+		return 0;
+		}
+}
+
+
+/*
+int SomarNos(Arvore* no,int *soma){
+   
+   
+   if (no != NULL){
+		SomarNos(no->esq,soma);
+		printf("soma = %d\n",soma);
+		soma += no->valor;
+		printf("soma = %d\n",soma);
+		SomarNos(no->dir,soma);
+	  }
+	else{
+			return 0;}
+}
+
+
+
+
+void imprimirArvore(Arvore* f, int *soma){
+  if(f != NULL){
+    imprimirArvore(f->esq,soma);
+    printf("%d\n", f->valor);
+    *soma += f->valor;
+    imprimirArvore(f->dir,soma);
+  }
+}
+
+int SomarNosInterativamete(Arvore* no){
+	int soma;
+	int i;
+	for(i=0;i!=-1;i++){
+		if (no != NULL)
+	 {
+			   soma=(no.esq)+(no.dir);
+			   return soma;
+	  }
+	else
+			   return 0;
+	}
+}
+
+*/
+
+/*
+int SomarNosInterativamente() 
+    {
+    	if (raiz != NULL){
+    		return 0;
+		}
+        // If tree is empty
+        if (root==null)
+        return 0; 
+		int quee[]
+         
+        // Initialize empty queue.
+        Queue<Node> queue = new LinkedList<Node>();
+         
+        // Do level order traversal starting from root
+        queue.add(root);
+         
+        int count=0; // Initialize count of full nodes
+        while (!queue.isEmpty()) 
+        {
+ 
+            Node temp = queue.poll();
+            if (temp.left!=null && temp.right!=null)
+            count++;
+ 
+            // Enqueue left child 
+            if (temp.left != null) 
+            {
+                queue.add(temp.left);
+            }
+ 
+            // Enqueue right child 
+            if (temp.right != null) 
+            {
+                queue.add(temp.right);
+            }
+        }
+        return count;
+}
+ 
+
+*/
+
+
+
+Arvore* inserirNaArvore(Arvore* f,int v){
+  if(f == NULL){
+    f = (Arvore*)malloc(sizeof(Arvore));
+    f->valor = v;
+    f->esq = f->dir = NULL;
+  }
+  else if(v < f->valor){
+    f->esq = inserirNaArvore(f->esq,v);
+	printf("\n\t\tInserido no lado esquerdo");
+  }else{
+    f->dir = inserirNaArvore(f->dir,v);
+	printf("\n\t\tInserindo no lado direito");
+  }
+  return f;
+}
+
+int ContadorDeNos(Arvore* x) {
+    if (x == NULL){
+		return 0;
+	}else{
+    return ContadorDeNos(x->esq) + ContadorDeNos(x->dir) + 1;
+	}
+}
+
+/*
+Arvore* removerElemento(Arvore* raiz, int info) {
+	Arvore* filho, n_raiz;
+
+	if (!raiz) return NULL;
+
+	if (raiz->info == info) {
+		if (raiz->direita) {
+			n_raiz = filho = raiz->direita;
+
+			while(filho->esquerda)
+				filho = filho->esquerda;
+
+			filho->esquerda = raiz->esquerda;
+
+			free (raiz);
+			return n_raiz;
+
+		} else {
+			n_raiz = raiz->esquerda;
+			free (raiz);
+			return n_raiz;
+		}
+
+	} else if (info > raiz->info)
+		raiz->direita = deletar(raiz->direita, info);
+	else
+		raiz->esquerda = deletar(raiz->esquerda, info);
+
+	return raiz;
+}
+*/
+ 
+ int calcularAltura(Arvore* x) {
+
+    int aux1, aux2;
+    if (x == NULL){
+		return -1;}
+    aux1 = calcularAltura(x->esq);
+    aux2 = calcularAltura(x->dir);
+    if (aux1 > aux2){
+		return aux1+1;}
+    else{
+        return aux2+1;
+	}
+}
+ 
+int menu (Arvore* arvore){
+		int escolha,valor;
+		printf("\n\t\t1- Insere\n\t\t2-Busca\n\t\t3-Imprime\n\t\t4 -conta nos");
+		scanf("%d",&escolha);
+		switch(escolha){
+			case 1:
+			while(valor > 0){
+				printf("\n\t\tDigite o valor para inserir:\n\t\t");
+				scanf("%d",&valor);
+				arvore = inserirNaArvore(arvore,valor);
+			}
+			menu(arvore);
+			case 2:
+				while(valor != 1){
+				printf("\n\t\tDigite o valor para buscar:\n\t\t");
+				scanf("%d",&valor);
+				buscarNaArvore(arvore,valor);
+			//		if(valor == count){
+			//		printf("O numero %d foi achado",count);}
+					menu(arvore);
+				}
+			case 3:
+				printf("\n\t\tImprimindo arvore...:\n\t\t");
+				imprimirArvore(arvore);
+				menu(arvore);
+			
+				int count=0;
+				printf("A soma dos nos da arvore, equivale a : %d \n",SomarNos(arvore,count));
+				menu(arvore);
+		}
+	
+	
+	return 0;
+}
+
+int main(){
+	    Arvore* x;
+		x = criarArvoreBinaria();
+		menu(x);
+		return 0;
+}
